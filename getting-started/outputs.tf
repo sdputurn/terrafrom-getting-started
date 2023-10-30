@@ -2,7 +2,7 @@
 # true|false if value is just need to passed to another module and no need to print to output}
 
 output "dns" {
-  value = aws_instance.nginx1.public_dns
+  value = aws_instance.nginx1[*].public_dns
   description = "web server public address"
 }
 output "ami-name" {
@@ -10,5 +10,5 @@ output "ami-name" {
   sensitive = false
 }
 output "intance_type" {
-  value = "instance type = ${var.instance_type}"
+  value = "instance type = ${var.instance_type} - ${local.name}"
 }
