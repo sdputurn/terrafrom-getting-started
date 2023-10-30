@@ -3,9 +3,7 @@ module "aws_infra" {
   build_user_name = "sdputurn"
   ssh_key_username = "sdputurn"
 }
-locals {
-  dns = module.aws_infra.dns
-}
+
 output "dns" {
-  value = local.dns
+  value = module.aws_infra.dns
 }
