@@ -9,3 +9,6 @@ output "ami-name" {
   value = nonsensitive("${data.aws_ssm_parameter.amzn2_linux.value}") #- ${ data.aws_ssm_parameter.amzn2_linux.value }"
   sensitive = false
 }
+output "intance_type" {
+  value = "instance type = ${var.instance_type}"
+}
