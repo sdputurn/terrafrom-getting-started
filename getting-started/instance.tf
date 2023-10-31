@@ -7,6 +7,7 @@ resource "aws_key_pair" "deployer" {
 }
 # INSTANCES #
 resource "aws_instance" "nginx1" {
+  count = 2
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public_subnet1.id

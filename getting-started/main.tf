@@ -4,3 +4,6 @@
 
 # locals: syntax locals { key = value } //kind of a scratch pad
 
+locals {
+  name = "testing"
+}
