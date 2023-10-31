@@ -2,4 +2,6 @@
 !.gitignore
 !*.tf
 !*.tfvars
-!Readme.md
+!README.md
+!examples/*
+!modules/*
