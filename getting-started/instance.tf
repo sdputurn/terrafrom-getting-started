@@ -7,7 +7,7 @@ resource "aws_key_pair" "deployer" {
 }
 # INSTANCES #
 resource "aws_instance" "nginx1" {
-  count = 2
+  # count = 2
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public_subnet1.id
@@ -26,3 +26,8 @@ echo '<html><head><title>Taco Team Server</title></head><body style=\"background
 EOF
 
 }
+# this worked when i changed the resource name label from nginx1 to nginx. without this terraform will delete the nginx1 and create new vm nginx
+# moved {
+#   from = aws_instance.nginx1
+#   to   = aws_instance.nginx
+# }
