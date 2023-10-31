@@ -12,7 +12,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.0.0, < 5.20.0"
+      version = ">= 5.0.0, <= 5.20.0"
     }
   }
 }
@@ -26,15 +26,15 @@ provider "aws" {
 # variables: precidence env var TF_VAR_, default terraform.tfvars, .auto.tfvars, --var-file, --var, command line prompt
 # syntax var "name_label" {}
 
-variable "name" {
+variable "build_user_name" {
   type        = string
   description = "Build user name"
   sensitive   = false
 }
-
+variable "ssh_key_username" {}
 # data: syntax data "data_source_label" "name_label" {"provider_data_arguments"}
 data "aws_ssm_parameter" "amzn2_linux" {
-  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+  name = "ami-id"
 }
 
 # resource: syntax resource "resource_label" "name_label" {"resource arguments"}
@@ -85,6 +85,12 @@ resource "aws_security_group" "nginx_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # outbound internet access
   egress {
@@ -94,7 +100,21 @@ resource "aws_security_group" "nginx_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+# ssh keys
+# resource "aws_iam_user" "user" {
+#   name = "test-user"
+#   path = "/"
+# }
 
+# resource "aws_iam_user_ssh_key" "iam_user" {
+#   username   = var.ssh_key_username
+#   encoding   = "SSH"
+#   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA1O151veNnsb1RYAleGrquc6htCBy7xPOKB4jK7YtFOyrhwJk9KBGQVwzopjIM2ICpG8iydtZefdiLIR767q5/JMDJE91b9TvJ6KXqJGm1rVFmv+Q0aN6LCK5gXhbZpQFaxvaNNNIT+F+j77K9EIoUumeQWXRSi2H0rOeUL0LK4TlQUoN2RhnIl7/2twjDF8WqAAdB79sztDSxxsQL0/NB4UzAJ4aqSj5IQ+99GjiuhiuCONjMIz+1atYvP1bYd/dBjyCmBuZU77kLF3oiJ4gnwsIexoeZJ+V3nl8TW71KWzze3RQmkuik86MYosmHEbHoivjlkM/D2Yu9B6TVAiuww=="
+# }
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA1O151veNnsb1RYAleGrquc6htCBy7xPOKB4jK7YtFOyrhwJk9KBGQVwzopjIM2ICpG8iydtZefdiLIR767q5/JMDJE91b9TvJ6KXqJGm1rVFmv+Q0aN6LCK5gXhbZpQFaxvaNNNIT+F+j77K9EIoUumeQWXRSi2H0rOeUL0LK4TlQUoN2RhnIl7/2twjDF8WqAAdB79sztDSxxsQL0/NB4UzAJ4aqSj5IQ+99GjiuhiuCONjMIz+1atYvP1bYd/dBjyCmBuZU77kLF3oiJ4gnwsIexoeZJ+V3nl8TW71KWzze3RQmkuik86MYosmHEbHoivjlkM/D2Yu9B6TVAiuww=="
+}
 # INSTANCES #
 resource "aws_instance" "nginx1" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
@@ -102,13 +122,14 @@ resource "aws_instance" "nginx1" {
   subnet_id              = aws_subnet.public_subnet1.id
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
   tags = {
-    "user" = var.name
+    "user" = var.build_user_name
   }
+  key_name = aws_key_pair.deployer.key_name
 
   user_data = <<EOF
 #! /bin/bash
-sudo amazon-linux-extras install -y nginx1
-sudo service nginx start
+sudo yum install -y nginx
+sudo systemctl start nginx
 sudo rm /usr/share/nginx/html/index.html
 echo '<html><head><title>Taco Team Server</title></head><body style=\"background-color:#1F778D\"><p style=\"text-align: center;\"><span style=\"color:#FFFFFF;\"><span style=\"font-size:28px;\">You did it! Have a &#127790;</span></span></p></body></html>' | sudo tee /usr/share/nginx/html/index.html
 EOF
@@ -122,4 +143,8 @@ EOF
 output "dns" {
   value = aws_instance.nginx1.public_dns
   description = "web server public address"
+}
+output "ami-name" {
+  value = nonsensitive("${data.aws_ssm_parameter.amzn2_linux.value}") #- ${ data.aws_ssm_parameter.amzn2_linux.value }"
+  sensitive = false
 }
