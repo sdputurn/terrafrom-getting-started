@@ -11,7 +11,7 @@ variable "vms" {
   default = ["a","b"]
 }
 for i in var.vms:
-resource "aws_instance" i {
+resource "aws_instance" "${i}" {
   # count = 2
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = var.instance_type
