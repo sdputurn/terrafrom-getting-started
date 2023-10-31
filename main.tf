@@ -1,14 +1,21 @@
 variable "token" {
-    # default = var.token
-  
+  # default = var.token
+
 }
 provider "github" {
-    token = var.token
-  
+  token = var.token
+
 }
+
+variable "username" {}
+
 module "github_repository" {
-    source = "./modules"
-    
-    
-  
+  username = var.username
+  source   = "./modules"
+}
+
+
+
+output "main" {
+  value = "${var.username} +++++++++++++ ${var.token} ++++++++ ${module.github_repository.going_crazy}"
 }
