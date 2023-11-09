@@ -21,6 +21,7 @@ resource "aws_subnet" "public_subnet2" {
   cidr_block              = "10.0.1.0/24"
   vpc_id                  = aws_vpc.app.id
   availability_zone = data.aws_availability_zones.available.names[1]
+  map_public_ip_on_launch = true
 }
 
 # ROUTING #
@@ -38,6 +39,10 @@ resource "aws_route_table_association" "app_subnet1" {
   route_table_id = aws_route_table.app.id
 }
 
+resource "aws_route_table_association" "app_subnet2" {
+  subnet_id      = aws_subnet.public_subnet2.id
+  route_table_id = aws_route_table.app.id
+}
 # SECURITY GROUPS #
 # Nginx security group 
 resource "aws_security_group" "nginx_sg" {

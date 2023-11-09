@@ -1,0 +1,17 @@
+echo "hello world!"
+node {
+    stage("code") {
+        git branch: 'main', url: 'https://github.com/sdputurn/terrafrom-getting-started.git'
+    }
+    stage("tf initialisation") {
+        sh 'cd getting-started'
+        sh 'export AWS_PROFILE=sdputurn'
+        sh 'terraform init'
+    }
+    stage("tf plan"){
+        sh 'terraform plan'
+    }
+    stage("apply") {
+        echo "apply"
+    }
+}
