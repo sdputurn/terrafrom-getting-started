@@ -10,6 +10,7 @@ pipelineJob('build-tf-job') {
         }
       }
       lightweight()
+      scriptPath 'getting-started/Jenkinsfile'
     }
   }
 }
