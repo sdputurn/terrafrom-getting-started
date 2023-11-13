@@ -4,14 +4,19 @@ node {
         git branch: 'main', url: 'https://github.com/sdputurn/terrafrom-getting-started.git'
     }
     stage("tf initialisation") {
-        sh 'cd getting-started'
-        sh 'export AWS_PROFILE=sdputurn'
-        sh 'terraform init'
+        dir('getting-started') {
+            sh 'export AWS_PROFILE=sdputurn'
+            sh 'terraform init'
+        }
     }
     stage("tf plan"){
-        sh 'terraform plan'
+        dir('getting-started') {
+            sh 'AWS_PROFILE=sdputurn terraform plan'
+        }
     }
     stage("apply") {
-        echo "apply"
+        dir('getting-started') {
+            sh 'AWS_PROFILE=sdputurn terraform apply'
+        }
     }
 }
