@@ -6,7 +6,7 @@ pipelineJob('build-tf-job') {
           remote {
             url('https://github.com/sdputurn/terrafrom-getting-started.git')
           }
-          branch('*/master')
+          branch('HEAD')
         }
       }
       lightweight()

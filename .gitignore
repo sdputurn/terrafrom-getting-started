@@ -2,6 +2,8 @@
 !.gitignore
 !*.tf
 !*.tfvars
+!*.groovy
+!Jenkinsfile
 !README.md
 !examples/*
 !modules/*

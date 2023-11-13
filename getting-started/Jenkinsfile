@@ -16,7 +16,7 @@ node {
     }
     stage("apply") {
         dir('getting-started') {
-            sh 'AWS_PROFILE=sdputurn terraform apply'
+            sh 'AWS_PROFILE=sdputurn terraform plan'
         }
     }
 }
