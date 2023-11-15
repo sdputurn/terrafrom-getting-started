@@ -1,0 +1,31 @@
+library identifier: '@master', 
+retriever: modernSCM([$class: 'GitSCMSource', credentialsId: '', 
+remote: 'https://github.com/sdputurn/groovy-shared-lib.git', 
+traits: [gitBranchDiscovery()]])
+// node {
+//     stage ("demo"){
+//         demo1 'test'
+//         script {
+//             def x = 'sandeep'
+//             println(x)
+//         }
+//         def j="boss"
+//         println(j)
+//         println(Jenkins.instance.pluginManager.plugins)
+
+//     }
+// }
+pipeline {
+  agent 'any'
+  stages {
+    stage ('run-groovy') {
+      steps {
+        script {
+          def x ='sandeep'
+          println(x)
+        }
+        demo1('test1')
+      }
+    }
+  }
+}
