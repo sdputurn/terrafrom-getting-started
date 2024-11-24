@@ -13,9 +13,11 @@ pipeline {
             }
         }
         stage("tf initialisation") {
-            dir('getting-started') {
-                sh 'export AWS_PROFILE=sdputurn'
-                sh 'terraform init'
+            steps {
+                dir('getting-started') {
+                    sh 'export AWS_PROFILE=sdputurn'
+                    sh 'terraform init'
+                }
             }
         }
         stage("tf plan"){
