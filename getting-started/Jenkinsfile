@@ -16,7 +16,9 @@ pipeline {
             steps {
                 dir('getting-started') {
                     sh 'export AWS_PROFILE=sdputurn'
-                    sh 'terraform init'
+                    ansiColor('xterm'){
+                        sh 'terraform init'
+                    }
                 }
             }
         }
