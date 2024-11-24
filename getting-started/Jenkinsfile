@@ -1,26 +1,63 @@
-echo "hello world!"
-node {
-    stage("findout whats in local") {
-        sh 'pwd ; ls -ltr'
-    }
-    stage("checkout scm") {
-        git branch: 'main', url: 'https://github.com/sdputurn/terrafrom-getting-started.git'
-    }
-    stage("tf initialisation") {
-        dir('getting-started') {
-            sh 'export AWS_PROFILE=sdputurn'
-            sh 'terraform init'
+pipeline {
+    agent any  // Run the pipeline on any available agent
+
+    stages {
+        stage("findout whats in local") {
+            sh 'pwd ; ls -ltr'
+        }
+        stage("checkout scm") {
+            git branch: 'main', url: 'https://github.com/sdputurn/terrafrom-getting-started.git'
+        }
+        stage("tf initialisation") {
+            dir('getting-started') {
+                sh 'export AWS_PROFILE=sdputurn'
+                sh 'terraform init'
+            }
+        }
+        stage("tf plan"){
+            dir('getting-started') {
+                sh 'AWS_PROFILE=sdputurn terraform plan'
+            }
+        }
+        stage("apply") {
+            dir('getting-started') {
+                sh 'AWS_PROFILE=sdputurn terraform plan'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'echo Build step running'
+                // Replace with actual build commands, e.g., Maven or npm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh 'echo Test step running'
+                // Replace with actual test commands, e.g., unit tests
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                sh 'echo Deploy step running'
+                // Replace with actual deploy commands, e.g., kubectl or SCP
+            }
         }
     }
-    stage("tf plan"){
-        dir('getting-started') {
-            sh 'AWS_PROFILE=sdputurn terraform plan'
+
+    post {
+        always {
+            echo 'Pipeline completed!'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
-    stage("apply") {
-        dir('getting-started') {
-            sh 'AWS_PROFILE=sdputurn terraform plan'
-        }
-    }
-    // comment 1
 }
